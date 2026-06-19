@@ -144,8 +144,7 @@ if (!fs.existsSync("leaderboardData.json")) {
     fs.writeFileSync("leaderboardData.json", JSON.stringify({}));
 }
 
-const config = JSON.parse(fs.readFileSync("config.json", "utf-8"));
-
+// config duplicate removed
 const bot = new Client({ 
     intents: [
         Intents.FLAGS.GUILDS, 
@@ -1671,7 +1670,7 @@ bot.on("messageCreate", async (message) => {
 // ── WEB API SUNUCUSU ───────────────────────────────────────────────────────
 // Website için Discord rol verisini JSON olarak sunar.
 // Erişim: http://localhost:3001
-const API_PORT = 3001;
+const API_PORT = process.env.PORT || 3001;
 const path = require("path");
 
 const TIER_SCORES_API = {
