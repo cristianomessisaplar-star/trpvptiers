@@ -73,44 +73,44 @@
         <div class="tabs-wrapper">
             <div class="tabs-scroll">
                 <button class="tab-btn active" data-mode="overall" id="tab-overall">
-                    <span class="tab-icon">🏆</span>
+                    <span class="tab-icon"><img src="icons/overall.png" alt="Overall" style="width:20px;height:20px;object-fit:contain;" onerror="this.outerHTML='🏆'"></span>
                     <span>Overall</span>
                 </button>
+                <button class="tab-btn" data-mode="spearmace" id="tab-spearmace">
+                    <span class="tab-icon"><img src="icons/spearmace.webp" alt="Spear Mace" style="width:20px;height:20px;object-fit:contain;" onerror="this.outerHTML='🔱'"></span>
+                    <span>Spear Mace</span>
+                </button>
                 <button class="tab-btn" data-mode="sword" id="tab-sword">
-                    <span class="tab-icon">🗡️</span>
+                    <span class="tab-icon"><img src="icons/sword.png" alt="Sword" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>Sword</span>
                 </button>
                 <button class="tab-btn" data-mode="axe" id="tab-axe">
-                    <span class="tab-icon">🪓</span>
+                    <span class="tab-icon"><img src="icons/axe.png" alt="Axe" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>Axe</span>
                 </button>
                 <button class="tab-btn" data-mode="mace" id="tab-mace">
-                    <span class="tab-icon">🔨</span>
+                    <span class="tab-icon"><img src="icons/mace.png" alt="Mace" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>Mace</span>
                 </button>
                 <button class="tab-btn" data-mode="uhc" id="tab-uhc">
-                    <span class="tab-icon">🪣</span>
+                    <span class="tab-icon"><img src="icons/uhc.png" alt="UHC" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>UHC</span>
                 </button>
                 <button class="tab-btn" data-mode="pot" id="tab-pot">
-                    <span class="tab-icon">💀</span>
+                    <span class="tab-icon"><img src="icons/pot.png" alt="Pot" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>Pot</span>
                 </button>
                 <button class="tab-btn" data-mode="nethpot" id="tab-nethpot">
-                    <span class="tab-icon">☠️</span>
+                    <span class="tab-icon"><img src="icons/nethop.png" alt="NethOP" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>NethOP</span>
                 </button>
                 <button class="tab-btn" data-mode="smp" id="tab-smp">
-                    <span class="tab-icon">🌍</span>
+                    <span class="tab-icon"><img src="icons/smp.png" alt="SMP" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>SMP</span>
                 </button>
                 <button class="tab-btn" data-mode="vanilla" id="tab-vanilla">
-                    <span class="tab-icon">🔮</span>
+                    <span class="tab-icon"><img src="icons/vanilla.png" alt="Vanilla" style="width:20px;height:20px;object-fit:contain;"></span>
                     <span>Vanilla</span>
-                </button>
-                <button class="tab-btn" data-mode="spearmace" id="tab-spearmace">
-                    <span class="tab-icon">🔱</span>
-                    <span>Spear Mace</span>
                 </button>
             </div>
         </div>
@@ -165,6 +165,11 @@
             </div>
         </div>
 
+        <!-- Tier Board (Grid Layout) -->
+        <div class="tier-board" id="tier-board" style="display:none;">
+            <!-- Sütunlar JavaScript ile oluşturulacak -->
+        </div>
+
         <!-- Empty State -->
         <div class="empty-state" id="empty-state" style="display:none;">
             <div class="empty-icon">🔍</div>
@@ -190,6 +195,51 @@
             </div>
         </div>
     </footer>
+
+    <!-- Player Modal -->
+    <div class="modal-overlay" id="player-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-header">
+                <div class="modal-avatar-container">
+                    <img id="modal-avatar" src="" alt="Player Avatar">
+                </div>
+                <h2 id="modal-username" class="modal-username">Username</h2>
+                <div id="modal-badge" class="modal-badge">
+                    <span class="badge-icon">🎖️</span>
+                    <span id="modal-rank-title">Combat Master</span>
+                </div>
+                <div id="modal-region" class="modal-region-text">North America</div>
+                <a id="modal-namemc" href="#" target="_blank" class="modal-namemc-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                        <path d="M4 4h16v16H4V4zm4 4v8h3v-5h2v5h3V8H8z"/>
+                    </svg>
+                    NameMC <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">POSITION</div>
+                <div class="modal-position-card">
+                    <div class="modal-rank-block">
+                        <span id="modal-rank-num">1.</span>
+                    </div>
+                    <div class="modal-position-details">
+                        <span class="position-medal">🏆</span>
+                        <span class="position-text">OVERALL</span>
+                        <span id="modal-points" class="position-points">(330 points)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-section">
+                <div class="modal-section-title">TIERS</div>
+                <div id="modal-tiers-list" class="modal-tiers-list">
+                    <!-- Tiers will be injected here via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="app.js"></script>
 </body>
