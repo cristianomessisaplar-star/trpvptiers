@@ -1570,23 +1570,34 @@ bot.on("interactionCreate", async (interaction) => {
 
         if (interaction.customId === "ticket_kategori_sec") {
             const kategori = interaction.values[0];
-            const channel  = await interaction.guild.channels.create(`ticket-${interaction.user.username}`, {
-                parent: ticketCategoryID,
-                permissionOverwrites: [
-                    { id: interaction.guild.id,  deny:  ['VIEW_CHANNEL'] },
-                    { id: interaction.user.id,   allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'ATTACH_FILES'] },
-                    { id: testerRoleID,          allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'ATTACH_FILES'] }
-                ]
-            });
-            const controlEmbed = new MessageEmbed()
-                .setTitle(`${kategori}`)
-                .setDescription(`**Yeni bir destek talebi.**\n\nTalep Açan:\n<@${interaction.user.id}>`)
-                .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true, size: 256 }))
-                .setColor("#FFCC00");
-            const selectRow  = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("btn_talep_islem").setPlaceholder("Talep İşlemleri").addOptions([{ label: "Üye Ekle", value: "add_user", emoji: "👤" }]));
-            const controlRow = new MessageActionRow().addComponents(new MessageButton().setCustomId("btn_close_ticket").setLabel("Kanalını Kapat").setStyle("DANGER").setEmoji("❌"));
-            await channel.send({ content: `<@${interaction.user.id}> | Destek Talebi`, embeds: [controlEmbed], components: [selectRow, controlRow] });
-            return interaction.reply({ content: `Kanal açıldı: ${channel}`, ephemeral: true });
+            
+            // Kullanıcının ard arda tıklamasını engellemek için anında mesajı düzenle/sil
+            await interaction.update({ content: "⏳ Destek talebiniz oluşturuluyor...", embeds: [], components: [] });
+            
+            try {
+                const channel  = await interaction.guild.channels.create(`ticket-${interaction.user.username}`, {
+                    parent: ticketCategoryID,
+                    permissionOverwrites: [
+                        { id: interaction.guild.id,  deny:  ['VIEW_CHANNEL'] },
+                        { id: interaction.user.id,   allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'ATTACH_FILES'] },
+                        { id: testerRoleID,          allow: ['VIEW_CHANNEL', 'SEND_MESSAGES', 'ATTACH_FILES'] }
+                    ]
+                });
+                const controlEmbed = new MessageEmbed()
+                    .setTitle(`${kategori}`)
+                    .setDescription(`**Yeni bir destek talebi.**\n\nTalep Açan:\n<@${interaction.user.id}>`)
+                    .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true, size: 256 }))
+                    .setColor("#FFCC00");
+                const selectRow  = new MessageActionRow().addComponents(new MessageSelectMenu().setCustomId("btn_talep_islem").setPlaceholder("Talep İşlemleri").addOptions([{ label: "Üye Ekle", value: "add_user", emoji: "👤" }]));
+                const controlRow = new MessageActionRow().addComponents(new MessageButton().setCustomId("btn_close_ticket").setLabel("Kanalını Kapat").setStyle("DANGER").setEmoji("❌"));
+                await channel.send({ content: `<@${interaction.user.id}> | Destek Talebi`, embeds: [controlEmbed], components: [selectRow, controlRow] });
+                
+                // Mesajı zaten güncellediğimiz için editReply ile veya sessizce işlemi bitiriyoruz.
+                // await interaction.editReply({ content: `✅ Kanal açıldı: ${channel}` }); // Opsiyonel
+            } catch (e) {
+                console.error("Ticket açma hatası:", e);
+                // await interaction.editReply({ content: "❌ Ticket açılırken hata oluştu." });
+            }
         }
 
         if (interaction.customId === "btn_talep_islem" && interaction.values[0] === "add_user") {
