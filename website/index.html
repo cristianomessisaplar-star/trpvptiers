@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TR PvP TierList - Rankings</title>
+    <meta name="description" content="TR PvP TierList - Türkiye'nin en iyi Minecraft PvP oyuncularının tier sıralaması">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-tr">TR</span>
+                <span class="logo-pvp">PvP</span>
+                <span class="logo-tiers">TIERS</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link active">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                    Ana Sayfa
+                </a>
+                <a href="#rankings" class="nav-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Sıralama
+                </a>
+                <a href="https://discord.gg/trpvp" class="nav-link" target="_blank">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.08.114 18.1.131 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                    Discord
+                </a>
+            </div>
+            <div class="nav-server">
+                <div class="server-info">
+                    <span class="server-label">SERVER IP</span>
+                    <span class="server-ip">Vxfq3DAn</span>
+                </div>
+                <div class="discord-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#5865F2"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057.102 18.08.114 18.1.131 18.113a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">TR PvP <span class="gradient-text">TierList</span></h1>
+            <p class="hero-sub">Türkiye'nin en iyi Minecraft PvP oyuncuları</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat-card">
+                <span class="stat-num" id="total-players">–</span>
+                <span class="stat-label">Toplam Oyuncu</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-num" id="total-tiers">–</span>
+                <span class="stat-label">Tier Kaydı</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-num">9</span>
+                <span class="stat-label">Oyun Modu</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-container" id="rankings">
+        <!-- Mode Tabs -->
+        <div class="tabs-wrapper">
+            <div class="tabs-scroll">
+                <button class="tab-btn active" data-mode="overall" id="tab-overall">
+                    <span class="tab-icon">🏆</span>
+                    <span>Overall</span>
+                </button>
+                <button class="tab-btn" data-mode="sword" id="tab-sword">
+                    <span class="tab-icon">🗡️</span>
+                    <span>Sword</span>
+                </button>
+                <button class="tab-btn" data-mode="axe" id="tab-axe">
+                    <span class="tab-icon">🪓</span>
+                    <span>Axe</span>
+                </button>
+                <button class="tab-btn" data-mode="mace" id="tab-mace">
+                    <span class="tab-icon">🔨</span>
+                    <span>Mace</span>
+                </button>
+                <button class="tab-btn" data-mode="uhc" id="tab-uhc">
+                    <span class="tab-icon">🪣</span>
+                    <span>UHC</span>
+                </button>
+                <button class="tab-btn" data-mode="pot" id="tab-pot">
+                    <span class="tab-icon">💀</span>
+                    <span>Pot</span>
+                </button>
+                <button class="tab-btn" data-mode="nethpot" id="tab-nethpot">
+                    <span class="tab-icon">☠️</span>
+                    <span>NethOP</span>
+                </button>
+                <button class="tab-btn" data-mode="smp" id="tab-smp">
+                    <span class="tab-icon">🌍</span>
+                    <span>SMP</span>
+                </button>
+                <button class="tab-btn" data-mode="vanilla" id="tab-vanilla">
+                    <span class="tab-icon">🔮</span>
+                    <span>Vanilla</span>
+                </button>
+                <button class="tab-btn" data-mode="spearmace" id="tab-spearmace">
+                    <span class="tab-icon">🔱</span>
+                    <span>Spear Mace</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search & Filter -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                <input type="text" id="search-input" placeholder="Oyuncu ara...">
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span id="api-status" style="font-size:11px;color:var(--text-muted);"></span>
+                <button onclick="fetchPlayers()" class="retry-btn" title="Yenile">🔄</button>
+            </div>
+            <div class="filter-group">
+                <select id="region-filter" class="filter-select">
+                    <option value="all">Tüm Bölgeler</option>
+                    <option value="TR">TR</option>
+                    <option value="EU">EU</option>
+                    <option value="NA">NA</option>
+                </select>
+                <select id="tier-filter" class="filter-select">
+                    <option value="all">Tüm Tierler</option>
+                    <option value="HT1">HT1</option>
+                    <option value="LT1">LT1</option>
+                    <option value="HT2">HT2</option>
+                    <option value="LT2">LT2</option>
+                    <option value="HT3">HT3</option>
+                    <option value="LT3">LT3</option>
+                    <option value="HT4">HT4</option>
+                    <option value="LT4">LT4</option>
+                    <option value="HT5">HT5</option>
+                    <option value="LT5">LT5</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table Header -->
+        <div class="table-header">
+            <div class="col-rank">#</div>
+            <div class="col-player">OYUNCU</div>
+            <div class="col-region">BÖLGE</div>
+            <div class="col-tiers">TİERLER</div>
+            <div class="col-points">PUAN</div>
+        </div>
+
+        <!-- Rankings Table -->
+        <div class="rankings-table" id="rankings-table">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <span>Yükleniyor...</span>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display:none;">
+            <div class="empty-icon">🔍</div>
+            <p>Oyuncu bulunamadı.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <span class="logo-tr">TR</span>
+                <span class="logo-pvp">PvP</span>
+                <span class="logo-tiers">TIERS</span>
+            </div>
+            <p class="footer-text">Türkiye'nin resmi Minecraft PvP Tier Listesi</p>
+            <div class="footer-links">
+                <a href="https://discord.gg/trpvp" target="_blank">Discord</a>
+                <span>•</span>
+                <a href="#">Kurallar</a>
+                <span>•</span>
+                <a href="#">API</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
