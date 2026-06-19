@@ -569,6 +569,16 @@ bot.on("ready", async () => {
             { name: "etiket-engelle",        description: "Birinin veya bir rolün etiketlenmesini engeller/açar.", options: [{ type: "USER", name: "kullanici", description: "Üye seçin", required: false }, { type: "ROLE", name: "rol", description: "Rol seçin", required: false }] },
             { name: "etiket-engelle-mevcut", description: "Etiket engellenmiş tüm kullanıcı ve rolleri listeler." },
             { name: "ticket-panel",      description: "Destek panelini kurar." },
+            {
+                name: "ticket-add",
+                description: "Açık olan ticketa bir üyeyi ekler.",
+                options: [{ type: "USER", name: "uye", description: "Eklenecek üye", required: true }]
+            },
+            {
+                name: "ticket-remove",
+                description: "Açık olan tickettan bir üyeyi çıkarır.",
+                options: [{ type: "USER", name: "uye", description: "Çıkarılacak üye", required: true }]
+            },
             // ── Yeni komutlar ──
             {
                 name: "rol-ver",
@@ -1317,6 +1327,30 @@ bot.on("interactionCreate", async (interaction) => {
             tData.panelMsgID = msg.id;
             saveTicketData(tData);
             return interaction.reply({ content: "Panel kuruldu.", ephemeral: true });
+        }
+
+        // ── /ticket-add ──────────────────────────────────────────────────
+        if (commandName === "ticket-add") {
+            if (!interaction.channel.name.startsWith("ticket-")) return interaction.reply({ content: "❌ Bu komut sadece ticket kanallarında kullanılabilir.", ephemeral: true });
+            if (!interaction.member.permissions.has("ADMINISTRATOR")) return interaction.reply({ content: "❌ Bu komutu sadece yöneticiler kullanabilir.", ephemeral: true });
+            const uye = options.getUser("uye");
+            await interaction.channel.permissionOverwrites.edit(uye.id, {
+                VIEW_CHANNEL: true,
+                SEND_MESSAGES: true,
+                READ_MESSAGE_HISTORY: true
+            });
+            return interaction.reply({ content: `✅ ${uye} başarıyla bu ticketa eklendi.` });
+        }
+
+        // ── /ticket-remove ───────────────────────────────────────────────
+        if (commandName === "ticket-remove") {
+            if (!interaction.channel.name.startsWith("ticket-")) return interaction.reply({ content: "❌ Bu komut sadece ticket kanallarında kullanılabilir.", ephemeral: true });
+            if (!interaction.member.permissions.has("ADMINISTRATOR")) return interaction.reply({ content: "❌ Bu komutu sadece yöneticiler kullanabilir.", ephemeral: true });
+            const uye = options.getUser("uye");
+            await interaction.channel.permissionOverwrites.edit(uye.id, {
+                VIEW_CHANNEL: false
+            });
+            return interaction.reply({ content: `✅ ${uye} başarıyla bu tickettan çıkarıldı.` });
         }
 
         // ── /etiket-engelle ────────────────────────────────────────────────
