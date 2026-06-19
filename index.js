@@ -328,9 +328,8 @@ async function updateQueuePanel(mod, guild) {
                 )
             );
         }
-        
-        await msg.edit({ content: null, embeds: [qEmbed], components }).catch(() => {});
         _panelDirty[mod] = false; // güncellendi, temiz
+        await msg.edit({ content: null, embeds: [qEmbed], components });
     } catch (e) {
         console.error(`Sıra paneli güncellenirken hata (${mod}):`, e);
     }
