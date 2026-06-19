@@ -1312,9 +1312,11 @@ bot.on("interactionCreate", async (interaction) => {
         // ── /sira-paneli ───────────────────────────────────────────────────
         if (commandName === "sira-paneli") {
             if (!interaction.member.permissions.has("ADMINISTRATOR") && !isTester) return interaction.reply({ content: "Yetkiniz yok.", ephemeral: true });
+            
+            // Hemen cevap vererek API hatasını (timeout) önlüyoruz
+            await interaction.reply({ content: "✅ Sıra paneli kuruluyor...", ephemeral: true });
+
             const mod = options.getString("mod");
-            // Kanal kontrolünü kaldırdım, böylece paneli dilediğin kanala kurabilirsin.
-            // if (interaction.channelId !== gameModes[mod].channelId) return interaction.reply({ content: "Hata: Bu komut sadece o moda ait kanalda kullanılabilir!", ephemeral: true });
             
             // Eski paneli sil - yeniden oluşturma imkânı
             const panelData = getPanelData();
@@ -1330,8 +1332,7 @@ bot.on("interactionCreate", async (interaction) => {
             modeMessages[mod] = initialMsg;
             savePanelData(mod, initialMsg.id, interaction.channelId);
             markPanelDirty(mod);
-            await updateQueuePanel(mod, interaction.guild);
-            return interaction.reply({ content: "✅ Sıra paneli başarıyla kuruldu.", ephemeral: true });
+            updateQueuePanel(mod, interaction.guild);
         }
 
         // ── /tierlist-paneli ───────────────────────────────────────────────
