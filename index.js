@@ -779,13 +779,15 @@ bot.on("interactionCreate", async (interaction) => {
             if (!isTester) return interaction.reply({ content: "❌ Bu komut sadece testerlar için.", ephemeral: true });
             const mod = options.getString("mod");
             activeTestersByMode[mod].add(interaction.user.id);
+            
+            // Guild'i önceden kaydet - reply sonrası null gelebilir!
+            const cachedGuild = interaction.guild;
             await interaction.reply({ content: "✅ Aktif listeye eklendiniz.", ephemeral: true });
             
-            // Arka planda çalıştır (API Timeout hatasını önlemek için)
             sendTesterLog(bot, "🟢 Tester Aktif", `<@${interaction.user.id}>, **${mod}** modunda aktif oldu.`, "#2ecc71");
             markPanelDirty(mod);
-            updateQueuePanel(mod, interaction.guild);
-            checkQueueAndOpenTest(mod, interaction.guild);
+            await updateQueuePanel(mod, cachedGuild);
+            checkQueueAndOpenTest(mod, cachedGuild);
             return;
         }
 
@@ -799,11 +801,12 @@ bot.on("interactionCreate", async (interaction) => {
                 lastTestSessions[cikMod] = Date.now();
             }
             
+            // Guild'i önceden kaydet!
+            const cachedGuild2 = interaction.guild;
             await interaction.reply({ content: "✅ Aktif listeden çıktınız.", ephemeral: true });
 
-            // Arka planda çalıştır
             markPanelDirty(cikMod);
-            updateQueuePanel(cikMod, interaction.guild);
+            await updateQueuePanel(cikMod, cachedGuild2);
             sendTesterLog(bot, "🔴 Tester Pasif", `<@${interaction.user.id}>, **${cikMod}** modundan çıktı.`, "#e74c3c");
             return;
         }
@@ -1331,7 +1334,7 @@ bot.on("interactionCreate", async (interaction) => {
 
             const mod = options.getString("mod");
             
-            // Eski paneli sil - yeniden oluşturma imkânı
+            // 1) panelData'daki kayıtlı eski paneli sil
             const panelData = getPanelData();
             if (panelData[mod]) {
                 try {
@@ -1340,12 +1343,32 @@ bot.on("interactionCreate", async (interaction) => {
                     if (oldMsg) await oldMsg.delete().catch(() => {});
                 } catch (e) {}
             }
+
+            // 2) Kanaldaki son 50 mesajı tara, bottan gelen eski panel mesajlarını sil
+            try {
+                const fetched = await interaction.channel.messages.fetch({ limit: 50 });
+                for (const [, m] of fetched) {
+                    if (m.author.id === bot.user.id && m.id !== interaction.id) {
+                        // Embed'i olan veya "paneli kuruluyor" içeren bot mesajlarını sil
+                        const hasOldEmbed = m.embeds.some(e =>
+                            e.title?.includes("Sırası") ||
+                            e.description?.includes("Sıra Kapalı") ||
+                            e.description?.includes("tester") ||
+                            e.description?.includes("Aktif Tester")
+                        );
+                        const hasOldContent = m.content?.includes("paneli kuruluyor");
+                        if (hasOldEmbed || hasOldContent) {
+                            await m.delete().catch(() => {});
+                        }
+                    }
+                }
+            } catch (e) {}
             
             const initialMsg = await interaction.channel.send({ content: `${gameModes[mod].name} paneli kuruluyor...` });
             modeMessages[mod] = initialMsg;
             savePanelData(mod, initialMsg.id, interaction.channelId);
             markPanelDirty(mod);
-            updateQueuePanel(mod, interaction.guild);
+            await updateQueuePanel(mod, interaction.guild);
         }
 
         // ── /tierlist-paneli ───────────────────────────────────────────────
