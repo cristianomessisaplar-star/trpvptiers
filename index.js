@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 const { 
     Client, 
@@ -1328,15 +1328,23 @@ bot.on("interactionCreate", async (interaction) => {
         // ── /sira-paneli ───────────────────────────────────────────────────
         if (commandName === "sira-paneli") {
             if (!interaction.member.permissions.has("ADMINISTRATOR") && !isTester) return interaction.reply({ content: "Yetkiniz yok.", ephemeral: true });
-            
-            // Hemen cevap vererek API hatasını (timeout) önlüyoruz
+
             await interaction.reply({ content: "✅ Sıra paneli kuruluyor...", ephemeral: true });
 
             const mod = options.getString("mod");
-            
-            // 1) panelData'daki kayıtlı eski paneli sil
+
+            // Kanaldaki TÜM bot mesajlarını sil (eski panel kaç mesaj önce olursa olsun)
+            try {
+                const fetched = await interaction.channel.messages.fetch({ limit: 100 });
+                const botMsgs = fetched.filter(m => m.author.id === bot.user.id);
+                for (const [, m] of botMsgs) {
+                    await m.delete().catch(() => {});
+                }
+            } catch (e) {}
+
+            // panelData'daki eski mesaj farklı kanalda olabilir, onu da sil
             const panelData = getPanelData();
-            if (panelData[mod]) {
+            if (panelData[mod] && panelData[mod].channelId !== interaction.channelId) {
                 try {
                     const oldChan = await bot.channels.fetch(panelData[mod].channelId);
                     const oldMsg  = await oldChan.messages.fetch(panelData[mod].messageId);
@@ -1344,26 +1352,6 @@ bot.on("interactionCreate", async (interaction) => {
                 } catch (e) {}
             }
 
-            // 2) Kanaldaki son 50 mesajı tara, bottan gelen eski panel mesajlarını sil
-            try {
-                const fetched = await interaction.channel.messages.fetch({ limit: 50 });
-                for (const [, m] of fetched) {
-                    if (m.author.id === bot.user.id && m.id !== interaction.id) {
-                        // Embed'i olan veya "paneli kuruluyor" içeren bot mesajlarını sil
-                        const hasOldEmbed = m.embeds.some(e =>
-                            e.title?.includes("Sırası") ||
-                            e.description?.includes("Sıra Kapalı") ||
-                            e.description?.includes("tester") ||
-                            e.description?.includes("Aktif Tester")
-                        );
-                        const hasOldContent = m.content?.includes("paneli kuruluyor");
-                        if (hasOldEmbed || hasOldContent) {
-                            await m.delete().catch(() => {});
-                        }
-                    }
-                }
-            } catch (e) {}
-            
             const initialMsg = await interaction.channel.send({ content: `${gameModes[mod].name} paneli kuruluyor...` });
             modeMessages[mod] = initialMsg;
             savePanelData(mod, initialMsg.id, interaction.channelId);
@@ -1886,3 +1874,4 @@ apiServer.listen(API_PORT, () => {
 });
 
 bot.login(config.token);
+
