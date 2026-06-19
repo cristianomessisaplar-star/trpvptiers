@@ -124,10 +124,7 @@ function saveWeeklyTester(data) {
 if (!fs.existsSync("panelData.json")) {
     fs.writeFileSync("panelData.json", JSON.stringify({}));
 }
-if (!fs.existsSync("config.json")) {
-    console.error("HATA: config.json bulunamadı!");
-    process.exit(1);
-}
+// config.json check removed for Render
 if (!fs.existsSync("testerStats.json")) {
     fs.writeFileSync("testerStats.json", JSON.stringify({}));
 }
