@@ -444,7 +444,27 @@ body {
 .tier-color-LT5 .tier-icon-circle { border-color: #1e293b; }
 .tier-color-LT5 .tier-pill { background: #1e293b; color: #fff; }
 
-.col-points-val { display: none; } /* Hide old points, moved to badge */
+.col-points-val {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    padding-right: 20px;
+    min-width: 70px;
+}
+.points-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1;
+}
+.points-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
 
 /* Loading */
 .loading-spinner {

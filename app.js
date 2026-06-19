@@ -28,12 +28,33 @@ const MODE_LABELS = {
 };
 
 function getModeIcon(mode) {
-    // Fotoğrafların isimleri mod isimlerinin küçük hali ve boşluksuz hali olacak. (örneğin: nethop.png, sword.png)
-    let filename = mode.toLowerCase().replace(" ", "") + ".png";
-    if (filename === "spearmace.png") {
-        filename = "spearmace.webp";
-    }
-    return `<img src="icons/${filename}" alt="${mode}" style="width:20px; height:20px; object-fit:contain;">`;
+    const iconMap = {
+        // küçük harf (key)
+        sword:        "icons/sword.png",
+        axe:          "icons/axe.png",
+        mace:         "icons/mace.png",
+        uhc:          "icons/uhc.png",
+        pot:          "icons/pot.png",
+        nethpot:      "icons/nethop.png",
+        nethop:       "icons/nethop.png",
+        smp:          "icons/smp.png",
+        vanilla:      "icons/vanilla.png",
+        spearmace:    "icons/spearmace.webp",
+        // API'dan gelen büyük harfli isimler
+        "Sword":      "icons/sword.png",
+        "Axe":        "icons/axe.png",
+        "Mace":       "icons/mace.png",
+        "UHC":        "icons/uhc.png",
+        "Pot":        "icons/pot.png",
+        "NethOP":     "icons/nethop.png",
+        "Neth Pot":   "icons/nethop.png",
+        "SMP":        "icons/smp.png",
+        "Vanilla":    "icons/vanilla.png",
+        "Spear Mace": "icons/spearmace.webp",
+    };
+    const src = iconMap[mode] || iconMap[mode?.toLowerCase()?.replace(/\s/g, "")] || null;
+    if (!src) return `<span style="font-size:16px">🎮</span>`;
+    return `<img src="${src}" alt="${mode}" style="width:20px; height:20px; object-fit:contain;" onerror="this.outerHTML='🎮'">`;
 }
 
 // ── State ─────────────────────────────────────────────────────────────────
@@ -156,10 +177,16 @@ function createPlayerRow(player, rank, activeMode) {
         tiersDiv.innerHTML = `<span style="color:var(--text-muted);font-size:12px">—</span>`;
     }
 
+    // Points
+    const pointsDiv = document.createElement("div");
+    pointsDiv.className = "col-points-val";
+    pointsDiv.innerHTML = `<span class="points-num">${modeScore}</span><span class="points-label">pts</span>`;
+
     row.appendChild(rankWrapper);
     row.appendChild(playerDiv);
     row.appendChild(regionDiv);
     row.appendChild(tiersDiv);
+    row.appendChild(pointsDiv);
 
     return row;
 }

@@ -531,13 +531,15 @@ bot.on("ready", async () => {
     }
 
     // Bot başlarken tüm panelleri hemen güncelle (yeni embed formatı uygulansın)
-    const guild = bot.guilds.cache.first();
-    if (guild) {
-        for (const mod in panelData) {
-            if (!gameModes[mod]) continue;
-            if (modeMessages[mod]) {
-                markPanelDirty(mod);
-                await updateQueuePanel(mod, guild).catch(() => {});
+    {
+        const startupGuild = bot.guilds.cache.first();
+        if (startupGuild) {
+            for (const mod in panelData) {
+                if (!gameModes[mod]) continue;
+                if (modeMessages[mod]) {
+                    markPanelDirty(mod);
+                    await updateQueuePanel(mod, startupGuild).catch(() => {});
+                }
             }
         }
     }
