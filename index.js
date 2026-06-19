@@ -293,7 +293,7 @@ async function updateQueuePanel(mod, guild) {
 
             qEmbed
                 .setColor("#ED4245")
-                .setAuthor({ name: "[1.21.11+] TR Vanilla PvP Topluluğu" })
+                .setAuthor({ name: "TRPVPTİERS" })
                 .setTitle("Şu Anda Aktif Tester Yok")
                 .setDescription(`Şu anda **${modInfo.name}** bölgeniz için uygun bir tester bulunmamaktadır.\nBir tester aktif olduğunda sıra sistemi açılacaktır.\nDaha sonra tekrar kontrol edin!\n\nSon test oturumu: \`${dateStr}\``);
 
