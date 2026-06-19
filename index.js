@@ -193,11 +193,13 @@ var modeQueues = {};
 var modeMessages = {};
 var activeTestersByMode = {};
 var activeTests = {};
+var lastTestSessions = {};
 for (const key of Object.keys(gameModes)) {
     modeQueues[key] = [];
     modeMessages[key] = null;
     activeTestersByMode[key] = new Set();
     activeTests[key] = new Set();
+    lastTestSessions[key] = null;
 }
 
 var testCooldowns = new Map();
@@ -278,28 +280,56 @@ async function updateQueuePanel(mod, guild) {
         const testers = activeTestersByMode[mod];
         const status  = testers.size > 0;
 
-        const desc = 
-            (status
-                ? "**Aktif Testerlar:** " + Array.from(testers).map(id => `<@${id}>`).join(", ")
-                : "**Aktif Testerlar:** Yok"
-            ) +
-            "\n\n**Bekleme Listesi (" + queue.length + "/20):**\n" +
-            (queue.map((u, i) => "`" + (i + 1) + ".` <@" + u + ">").join("\n") || "_Sıra boş._");
+        let qEmbed = new MessageEmbed();
+        let components = [];
 
-        const qEmbed = new MessageEmbed()
-            .setTitle(status ? `🛡️ TR PvP ${modInfo.name} Sırası Aktif` : `⚠️ ${modInfo.name} Sırası Kapalı`)
-            .setColor(status ? "#2ecc71" : "#e74c3c")
-            .setDescription(desc)
-            .setFooter({ text: `${modInfo.name} Modu | Otomatik Güncelleme` })
-            .setTimestamp();
+        if (!status) {
+            // KAPALI DURUM (MCTIERS Tarzı)
+            let dateStr = "Bilinmiyor";
+            if (lastTestSessions[mod]) {
+                const d = new Date(lastTestSessions[mod]);
+                dateStr = d.toLocaleString("tr-TR", { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            }
+
+            qEmbed
+                .setColor("#ED4245")
+                .setAuthor({ name: "[1.21.11+] TR Vanilla PvP Topluluğu" })
+                .setTitle("Şu Anda Aktif Tester Yok")
+                .setDescription(`Şu anda **${modInfo.name}** bölgeniz için uygun bir tester bulunmamaktadır.\nBir tester aktif olduğunda sıra sistemi açılacaktır.\nDaha sonra tekrar kontrol edin!\n\nSon test oturumu: \`${dateStr}\``);
+
+            // Kapalıyken buton yok
+        } else {
+            // AÇIK DURUM (MCTIERS Tarzı)
+            const desc = 
+                "⏱️ Sıra her 10 saniyede bir güncellenir.\n" +
+                "Sıradan ayrılmak isterseniz butonu veya `/leave` komutunu kullanın.\n\n" +
+                `**Sıra (${queue.length}/20):**\n` +
+                (queue.map((u, i) => `**${i + 1}.** <@${u}>`).join("\n") || "_Sıra boş._") +
+                "\n\n**Aktif Testerlar:**\n" +
+                Array.from(testers).map((id, i) => `**${i + 1}.** <@${id}>`).join("\n");
+
+            qEmbed
+                .setColor("#5865F2")
+                .setTitle("Tester(lar) Aktif!")
+                .setDescription(desc);
+
+            components.push(
+                new MessageActionRow().addComponents(
+                    new MessageButton()
+                        .setCustomId(`join_${mod}`)
+                        .setLabel("Sıraya Katıl")
+                        .setStyle("PRIMARY")
+                        .setDisabled(queue.length >= 20),
+                    new MessageButton()
+                        .setCustomId("check_cooldown")
+                        .setLabel("Cooldown Kontrol")
+                        .setStyle("SECONDARY")
+                        .setEmoji("⏰")
+                )
+            );
+        }
         
-        const row = new MessageActionRow().addComponents(
-            new MessageButton().setCustomId(`join_${mod}`).setLabel(`${modInfo.name} Sırasına Gir`).setStyle("SUCCESS").setDisabled(!status || queue.length >= 20),
-            new MessageButton().setCustomId("check_cooldown").setLabel("Cooldown Kontrol").setStyle("SECONDARY").setEmoji("⏰"),
-            new MessageButton().setLabel("Kurallar").setStyle("LINK").setURL(`https://discord.com/channels/${msg.guildId || msg.guild?.id || guild.id}/${rulesChannelId}`).setEmoji("📜")
-        );
-        
-        await msg.edit({ content: null, embeds: [qEmbed], components: [row] }).catch(() => {});
+        await msg.edit({ content: null, embeds: [qEmbed], components }).catch(() => {});
         _panelDirty[mod] = false; // güncellendi, temiz
     } catch (e) {
         console.error(`Sıra paneli güncellenirken hata (${mod}):`, e);
@@ -737,9 +767,11 @@ bot.on("interactionCreate", async (interaction) => {
             const mod = options.getString("mod");
             activeTestersByMode[mod].add(interaction.user.id);
             await interaction.reply({ content: "✅ Aktif listeye eklendiniz.", ephemeral: true });
+            
+            // Arka planda çalıştır (API Timeout hatasını önlemek için)
             sendTesterLog(bot, "🟢 Tester Aktif", `<@${interaction.user.id}>, **${mod}** modunda aktif oldu.`, "#2ecc71");
             markPanelDirty(mod);
-            await updateQueuePanel(mod, interaction.guild);
+            updateQueuePanel(mod, interaction.guild);
             checkQueueAndOpenTest(mod, interaction.guild);
             return;
         }
@@ -750,10 +782,17 @@ bot.on("interactionCreate", async (interaction) => {
             const cikMod = options.getString("mod");
             activeTestersByMode[cikMod].delete(interaction.user.id);
             
+            if (activeTestersByMode[cikMod].size === 0) {
+                lastTestSessions[cikMod] = Date.now();
+            }
+            
+            await interaction.reply({ content: "✅ Aktif listeden çıktınız.", ephemeral: true });
+
+            // Arka planda çalıştır
             markPanelDirty(cikMod);
-            await updateQueuePanel(cikMod, interaction.guild);
+            updateQueuePanel(cikMod, interaction.guild);
             sendTesterLog(bot, "🔴 Tester Pasif", `<@${interaction.user.id}>, **${cikMod}** modundan çıktı.`, "#e74c3c");
-            return interaction.reply({ content: "✅ Aktif listeden çıktınız.", ephemeral: true });
+            return;
         }
 
         // ── /sonuc ─────────────────────────────────────────────────────────
