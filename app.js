@@ -7,11 +7,11 @@
 
 // ── Tier puanları (bot ile aynı) ──────────────────────────────────────────
 const TIER_SCORES = {
-    HT1: 60, LT1: 45,
-    HT2: 30,  LT2: 20,
-    HT3: 10,  LT3: 6,
-    HT4: 4,  LT4: 3,
-    HT5: 2,  LT5: 1
+    HT1: 20, LT1: 18,
+    HT2: 16,  LT2: 14,
+    HT3: 12,  LT3: 10,
+    HT4: 8,  LT4: 6,
+    HT5: 3,  LT5: 1
 };
 
 const MODE_LABELS = {
@@ -176,7 +176,13 @@ function createPlayerRow(player, rank, activeMode) {
     row.appendChild(playerDiv);
     row.appendChild(regionDiv);
     row.appendChild(tiersDiv);
-            row.appendChild(pointsDiv);
+    row.appendChild(pointsDiv);
+
+    // Doğrudan tıklama olayı ekle (daha güvenli)
+    row.style.cursor = "pointer";
+    row.onclick = () => {
+        openModal(player.nick, rank.toString());
+    };
 
     return row;
 }
@@ -190,7 +196,11 @@ let tierFilter   = "all";
 function renderTable() {
     const table  = document.getElementById("rankings-table");
     const empty  = document.getElementById("empty-state");
+    const tierBoard = document.getElementById("tier-board");
+    const tableHeader = document.getElementById("table-header");
+    
     table.innerHTML = "";
+    if (tierBoard) tierBoard.innerHTML = "";
 
     const modeLabel = MODE_LABELS[currentMode];
 
@@ -227,17 +237,135 @@ function renderTable() {
 
     if (players.length === 0) {
         empty.style.display = "block";
+        table.style.display = "none";
+        if (tableHeader) tableHeader.style.display = "none";
+        if (tierBoard) tierBoard.style.display = "none";
         return;
     }
     empty.style.display = "none";
 
-    players.forEach((p, i) => {
-        table.appendChild(createPlayerRow(p, i + 1, currentMode));
-    });
+    if (currentMode === "overall") {
+        table.style.display = "block";
+        if (tableHeader) tableHeader.style.display = "grid";
+        if (tierBoard) tierBoard.style.display = "none";
+        
+        players.forEach((p, i) => {
+            table.appendChild(createPlayerRow(p, i + 1, currentMode));
+        });
+    } else {
+        table.style.display = "none";
+        if (tableHeader) tableHeader.style.display = "none";
+        if (tierBoard) {
+            tierBoard.style.display = "flex";
+            renderTierBoard(players, modeLabel);
+        }
+    }
 
     // Hero istatistikleri güncelle
     document.getElementById("total-players").textContent = allPlayers.length;
     document.getElementById("total-tiers").textContent = allPlayers.reduce((s, p) => s + p.tiers.length, 0);
+}
+
+// ── Tier Board Render ─────────────────────────────────────────────────────
+function renderTierBoard(players, modeLabel) {
+    const tierBoard = document.getElementById("tier-board");
+    tierBoard.innerHTML = "";
+    
+    // Tier sıralaması
+    const tierOrder = ["HT1", "LT1", "HT2", "LT2", "HT3", "LT3", "HT4", "LT4", "HT5", "LT5"];
+    
+    // Oyuncuları tier'lara göre grupla
+    const groups = {};
+    tierOrder.forEach(t => groups[t] = []);
+    
+    players.forEach(p => {
+        const modeTiers = p.tiers.filter(t => t.mode === modeLabel);
+        if (modeTiers.length === 0) return;
+        modeTiers.sort((a, b) => tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
+        const highestTier = modeTiers[0].tier;
+        if (groups[highestTier]) groups[highestTier].push(p);
+    });
+    
+    tierOrder.forEach(tier => {
+        const groupPlayers = groups[tier];
+        if (groupPlayers.length === 0) return; // Boş kolonları gizle
+        
+        const col = document.createElement("div");
+        col.className = "tier-column";
+        
+        // Kolon başlığı
+        const header = document.createElement("div");
+        header.className = "tier-col-header";
+        
+        let colorCode = "#3498db";
+        if(tier.includes('1')) colorCode = "#f1c40f";
+        else if(tier.includes('2')) colorCode = "#bdc3c7";
+        else if(tier.includes('3')) colorCode = "#cd7f32";
+        else if(tier.includes('4')) colorCode = "#9b59b6";
+        header.style.color = colorCode;
+        
+        const titleSpan = document.createElement("span");
+        titleSpan.textContent = tier;
+        
+        const countSpan = document.createElement("span");
+        countSpan.className = "tier-col-count";
+        countSpan.textContent = groupPlayers.length;
+        
+        header.appendChild(titleSpan);
+        header.appendChild(countSpan);
+        col.appendChild(header);
+        
+        // Oyuncu listesi
+        const listDiv = document.createElement("div");
+        listDiv.className = "tier-players-list";
+        
+        groupPlayers.forEach(p => {
+            const card = document.createElement("div");
+            card.className = "tier-player-card";
+            card.dataset.nick = p.nick;
+            
+            // Oyuncuya tıklanınca modal açılsın
+            card.addEventListener("click", () => {
+                // Genel sıralamadaki yerini bulalım (tüm oyuncuları puana göre sıralayıp)
+                const sortedAll = [...allPlayers].sort((a,b) => calcScore(b.tiers) - calcScore(a.tiers));
+                const overallIndex = sortedAll.findIndex(pl => pl.nick === p.nick);
+                const actualRank = overallIndex !== -1 ? (overallIndex + 1).toString() : "-";
+                
+                openModal(p.nick, actualRank);
+            });
+            
+            const img = document.createElement("img");
+            img.className = "tier-player-avatar";
+            img.src = getSkinUrl(p.nick);
+            img.onerror = () => { img.src = "https://mc-heads.net/avatar/Steve/48"; };
+            
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "tier-player-info";
+            
+            const nameDiv = document.createElement("div");
+            nameDiv.className = "tier-player-name";
+            nameDiv.textContent = p.nick;
+            
+            const badgeDiv = document.createElement("div");
+            badgeDiv.style.marginTop = "2px";
+            
+            const badgeSpan = document.createElement("span");
+            badgeSpan.className = "tier-player-badge";
+            badgeSpan.style.color = colorCode;
+            badgeSpan.textContent = tier;
+            badgeDiv.appendChild(badgeSpan);
+            
+            infoDiv.appendChild(nameDiv);
+            infoDiv.appendChild(badgeDiv);
+            
+            card.appendChild(img);
+            card.appendChild(infoDiv);
+            listDiv.appendChild(card);
+        });
+        
+        col.appendChild(listDiv);
+        tierBoard.appendChild(col);
+    });
 }
 
 // ── Event Listeners ───────────────────────────────────────────────────────
@@ -355,13 +483,31 @@ function openModal(playerName, rank) {
         label.style.fontWeight = "800";
         label.style.color = colorCode;
         
-        badge.appendChild(iconDiv);
-        badge.appendChild(tierText);
-        mTiersBox.appendChild(badge);
+        tierDiv.appendChild(imgBox);
+        tierDiv.appendChild(label);
+        mTiersBox.appendChild(tierDiv);
     });
     
     // Modalı Göster
     modalOverlay.classList.add("active");
+}
+
+// EVENT LISTENERS //
+function closeModal() {
+    modalOverlay.classList.remove("active");
+}
+
+if (modalClose) {
+    modalClose.onclick = (e) => {
+        e.stopPropagation();
+        closeModal();
+    };
+}
+
+if (modalOverlay) {
+    modalOverlay.onclick = (e) => {
+        if (e.target === modalOverlay) closeModal();
+    };
 }
 
 /* --- INFO MODAL LOGIC --- */
@@ -416,12 +562,18 @@ document.getElementById("rankings-table").addEventListener("click", (e) => {
     const row = e.target.closest(".player-row");
     if (!row) return;
     
-    const playerName = row.querySelector(".player-name").textContent.trim();
-    // Rank numarasını doğrudan satırdan alalım (span içinden)
-    let rankText = row.querySelector(".col-rank-num").textContent.trim();
-    if(rankText === "🥇") rankText = "1";
-    if(rankText === "🥈") rankText = "2";
-    if(rankText === "🥉") rankText = "3";
+    const nameEl = row.querySelector(".player-name");
+    if (!nameEl) return;
+    const playerName = nameEl.textContent.trim();
+    
+    let rankText = "-";
+    const rankEl = row.querySelector(".col-rank-num");
+    if (rankEl) {
+        rankText = rankEl.textContent.trim();
+        if(rankText === "🥇") rankText = "1";
+        if(rankText === "🥈") rankText = "2";
+        if(rankText === "🥉") rankText = "3";
+    }
     
     openModal(playerName, rankText);
 });
