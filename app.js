@@ -412,83 +412,74 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 // ── Modal Mantığı ─────────────────────────────────────────────────────────
 const modalOverlay = document.getElementById("playerModal");
-const modalClose = document.getElementById("modalClose");
+const modalClose   = document.getElementById("modalClose");
 
-const mAvatar = document.getElementById("modalAvatar");
-const mName = document.getElementById("modalName");
-const mTitle = document.getElementById("modalTitle");
-const mRegion = document.getElementById("modalRegionText");
-const mNameMC = document.getElementById("modalNameMC");
-const mRankNum = document.getElementById("modalRankNum");
-const mPoints = document.getElementById("modalPoints");
-const mTiersBox = document.getElementById("modalTiersBox");
+const mAvatar    = document.getElementById("modalAvatar");
+const mName      = document.getElementById("modalName");
+const mTitle     = document.getElementById("modalTitle");
+const mRegion    = document.getElementById("modalRegionText");
+const mNameMC    = document.getElementById("modalNameMC");
+const mRankNum   = document.getElementById("modalRankNum");
+const mPoints    = document.getElementById("modalPoints");
+const mTierCount = document.getElementById("modalTierCount");
+const mTiersBox  = document.getElementById("modalTiersBox");
+const mBannerBg  = document.getElementById("modalBannerBg");
 
-const regionNames = {
-    "NA": "North America",
-    "EU": "Europe",
-    "TR": "Turkey"
-};
+function getTierColor(tier) {
+    if (tier.includes('1')) return "#f1c40f";
+    if (tier.includes('2')) return "#bdc3c7";
+    if (tier.includes('3')) return "#cd7f32";
+    if (tier.includes('4')) return "#9b59b6";
+    return "#3498db";
+}
 
 function openModal(playerName, rank) {
     const player = allPlayers.find(p => p.nick === playerName);
     if (!player) return;
-    
+
     const score = calcScore(player.tiers);
-    
+
     mAvatar.src = getSkinUrl(player.nick);
-    mName.textContent = player.nick;
+    mAvatar.onerror = () => { mAvatar.src = "https://mc-heads.net/avatar/Steve/80"; };
+    mName.textContent  = player.nick;
     mTitle.textContent = getRankTitle(score);
-    
-    const r = player.region ? player.region.toUpperCase() : "EU";
-    mRegion.textContent = regionNames[r] || r;
-    
+
+    const r = player.region ? player.region.toUpperCase() : "TR";
+    mRegion.textContent = r;
+
     mNameMC.href = `https://namemc.com/profile/${player.nick}`;
-    mRankNum.textContent = rank + ".";
-    mPoints.textContent = `(${score} points)`;
-    
+    mRankNum.textContent   = rank.toString().replace(".", "");
+    mPoints.textContent    = score;
+    if (mTierCount) mTierCount.textContent = player.tiers.length;
+
+    // Banner rengi — en iyi tier'a göre
+    if (mBannerBg && player.tiers.length > 0) {
+        const topTier = player.tiers.reduce((best, t) =>
+            (TIER_SCORES[t.tier] || 0) > (TIER_SCORES[best.tier] || 0) ? t : best,
+            player.tiers[0]);
+        const bc = getTierColor(topTier.tier);
+        mBannerBg.style.background = `linear-gradient(135deg, ${bc}55 0%, #0d1117 70%)`;
+    }
+
+    // Tierler grid
     mTiersBox.innerHTML = "";
-    
     player.tiers.forEach(t => {
-        let iconUrl = modeIconsMap[t.mode.toLowerCase()] || modeIconsMap["sword"]; 
-        let iconHtml = `<img src="${iconUrl}" width="20" height="20" alt="${t.mode}">`;
-        
-        let colorCode = "#3498db";
-        if(t.tier.includes('1')) colorCode = "#f1c40f";
-        else if(t.tier.includes('2')) colorCode = "#bdc3c7";
-        else if(t.tier.includes('3')) colorCode = "#cd7f32";
-        else if(t.tier.includes('4')) colorCode = "#9b59b6";
-        
-        const tierDiv = document.createElement("div");
-        tierDiv.style.display = "flex";
-        tierDiv.style.flexDirection = "column";
-        tierDiv.style.alignItems = "center";
-        tierDiv.style.gap = "6px";
-        
-        const imgBox = document.createElement("div");
-        imgBox.style.width = "36px";
-        imgBox.style.height = "36px";
-        imgBox.style.borderRadius = "50%";
-        imgBox.style.border = `1.5px solid ${colorCode}`;
-        imgBox.style.background = "#0d1117"; // matches background
-        imgBox.style.display = "flex";
-        imgBox.style.alignItems = "center";
-        imgBox.style.justifyContent = "center";
-        imgBox.style.color = "#c9d1d9";
-        imgBox.style.fontSize = "16px";
-        imgBox.innerHTML = iconHtml;
-        
-        const label = document.createElement("span");
-        label.textContent = t.tier;
-        label.style.fontSize = "12px";
-        label.style.fontWeight = "800";
-        label.style.color = colorCode;
-        
-        tierDiv.appendChild(imgBox);
-        tierDiv.appendChild(label);
-        mTiersBox.appendChild(tierDiv);
+        const color   = getTierColor(t.tier);
+        const modeKey = t.mode.toLowerCase().replace(/\s/g, "");
+        const iconUrl = modeIconsMap[modeKey] || modeIconsMap["sword"];
+
+        const cell = document.createElement("div");
+        cell.className = "profile-tier-cell";
+        cell.innerHTML = `
+            <div class="profile-tier-icon-wrap" style="border-color:${color};box-shadow:0 0 8px ${color}44">
+                <img src="${iconUrl}" width="22" height="22" alt="${t.mode}" onerror="this.style.display='none'">
+            </div>
+            <span class="profile-tier-label" style="color:${color}">${t.tier}</span>
+            <span class="profile-tier-mode">${t.mode}</span>
+        `;
+        mTiersBox.appendChild(cell);
     });
-    
-    // Modalı Göster
+
     modalOverlay.classList.add("active");
 }
 

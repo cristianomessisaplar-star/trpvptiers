@@ -911,3 +911,206 @@ body {
 
 .modal-close { z-index: 9999 !important; }
 
+/* ═══════════════════════════════════════════════
+   YENİ PREMİUM PROFİL KARTI
+═══════════════════════════════════════════════ */
+.profile-card {
+    background: #0d1117;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 16px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #1f252f;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+    transform: translateY(20px);
+    transition: transform 0.3s;
+}
+.modal-overlay.active .profile-card { transform: translateY(0); }
+
+/* Banner */
+.profile-banner {
+    position: relative;
+    height: 90px;
+    background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.profile-banner-bg {
+    position: absolute;
+    inset: 0;
+    transition: background 0.4s;
+}
+.profile-avatar-wrap {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+.profile-avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 12px;
+    border: 3px solid #1f252f;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    display: block;
+    image-rendering: pixelated;
+}
+
+/* Identity */
+.profile-identity {
+    margin-top: 44px;
+    padding: 0 24px 0;
+    text-align: center;
+}
+.profile-username {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e6edf3;
+    margin: 0 0 8px;
+    letter-spacing: 0.3px;
+}
+.profile-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+.profile-title-badge {
+    background: linear-gradient(90deg, #f1c40f22, #f1c40f11);
+    border: 1px solid #f1c40f55;
+    color: #f1c40f;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.profile-region-chip {
+    background: rgba(88,101,242,0.15);
+    border: 1px solid rgba(88,101,242,0.4);
+    color: #7289da;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+.profile-namemc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #58a6ff;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    margin-bottom: 4px;
+}
+.profile-namemc-link:hover { opacity: 1; }
+
+/* Stats Row */
+.profile-stats-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 18px 24px;
+    background: #131920;
+    border: 1px solid #1f252f;
+    border-radius: 12px;
+    padding: 14px 0;
+}
+.profile-stat-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+.profile-stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: #e6edf3;
+    line-height: 1;
+}
+.profile-stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #4a5568;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.profile-stat-divider {
+    width: 1px;
+    height: 36px;
+    background: #1f252f;
+}
+
+/* Tiers Section */
+.profile-tiers-section {
+    padding: 0 20px 20px;
+}
+.profile-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.profile-section-line {
+    flex: 1;
+    height: 1px;
+    background: #1f252f;
+}
+.profile-section-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: #4a5568;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.profile-tiers-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+.profile-tier-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    cursor: default;
+}
+.profile-tier-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid;
+    background: #0a0e14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+.profile-tier-cell:hover .profile-tier-icon-wrap {
+    transform: scale(1.1);
+}
+.profile-tier-label {
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+}
+.profile-tier-mode {
+    font-size: 9px;
+    color: #4a5568;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
