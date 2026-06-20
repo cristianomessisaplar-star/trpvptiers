@@ -192,52 +192,56 @@
 
     <!-- PLAYER PROFILE MODAL -->
     <div id="playerModal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content profile-card">
             <button class="modal-close" id="modalClose">&times;</button>
-            
-            <div class="modal-header">
-                <div class="modal-avatar-wrapper">
-                    <img src="" alt="Avatar" id="modalAvatar" class="modal-avatar">
+
+            <!-- Banner & Avatar -->
+            <div class="profile-banner">
+                <div class="profile-banner-bg" id="modalBannerBg"></div>
+                <div class="profile-avatar-wrap">
+                    <img src="" alt="Avatar" id="modalAvatar" class="profile-avatar">
                 </div>
-                <h2 id="modalName" class="modal-name">PlayerName</h2>
-                
-                <div class="modal-title-box">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#f1c40f" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L22 7L12 12L2 7L12 2Z" />
-                        <path d="M2 17L12 22L22 17V12L12 17L2 12V17Z" />
-                    </svg>
-                    <span id="modalTitle">Combat Master</span>
+            </div>
+
+            <!-- Identity -->
+            <div class="profile-identity">
+                <h2 class="profile-username" id="modalName">PlayerName</h2>
+                <div class="profile-badge-row">
+                    <span class="profile-title-badge" id="modalTitle">Combat Master</span>
+                    <span class="profile-region-chip" id="modalRegionText">TR</span>
                 </div>
-                
-                <div id="modalRegionText" class="modal-region-text">North America</div>
-                
-                <a href="#" id="modalNameMC" class="modal-namemc-btn" target="_blank">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                    NameMC
+                <a href="#" id="modalNameMC" class="profile-namemc-link" target="_blank">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    NameMC'de Görüntüle
                 </a>
             </div>
 
-            <div class="modal-body">
-                <div class="modal-section-label">POSITION</div>
-                <div class="modal-position-box">
-                    <div class="modal-rank-slant">
-                        <span id="modalRankNum" class="modal-rank-num">1.</span>
-                    </div>
-                    <div class="modal-overall-info">
-                        <span class="modal-trophy">🏆</span>
-                        <span class="modal-overall-text">OVERALL</span>
-                        <span id="modalPoints" class="modal-points-text">(330 points)</span>
-                    </div>
+            <!-- Stats Row -->
+            <div class="profile-stats-row">
+                <div class="profile-stat-item">
+                    <span class="profile-stat-value" id="modalRankNum">1</span>
+                    <span class="profile-stat-label">SIRA</span>
                 </div>
+                <div class="profile-stat-divider"></div>
+                <div class="profile-stat-item">
+                    <span class="profile-stat-value" id="modalPoints">330</span>
+                    <span class="profile-stat-label">PUAN</span>
+                </div>
+                <div class="profile-stat-divider"></div>
+                <div class="profile-stat-item">
+                    <span class="profile-stat-value" id="modalTierCount">0</span>
+                    <span class="profile-stat-label">TİER</span>
+                </div>
+            </div>
 
-                <div class="modal-section-label">TIERS</div>
-                <div class="modal-tiers-box" id="modalTiersBox">
-                    <!-- Tiers dynamically inserted here -->
+            <!-- Tiers Section -->
+            <div class="profile-tiers-section">
+                <div class="profile-section-header">
+                    <div class="profile-section-line"></div>
+                    <span class="profile-section-title">TİERLER</span>
+                    <div class="profile-section-line"></div>
                 </div>
+                <div class="profile-tiers-grid" id="modalTiersBox"></div>
             </div>
         </div>
     </div>
